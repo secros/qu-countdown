@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown Timer – Days Until Any Event, Birthday, or Deadline | QuickUtils</title>
+<meta name="description" content="Free countdown timer. Count down days, hours, minutes and seconds to any event — birthdays, holidays, New Year, deadlines, weddings, or your own custom date. No signup needed.">
+<meta name="keywords" content="countdown timer, days until, days until Christmas, days until New Year, days until birthday, countdown to event, date countdown calculator, how many days until">
+<link rel="canonical" href="https://countdown.quickutils.tools/">
+<meta property="og:title" content="Countdown Timer | QuickUtils">
+<meta property="og:description" content="Count down days, hours, minutes, and seconds to any date. Birthdays, holidays, deadlines — free and instant.">
+<meta property="og:url" content="https://countdown.quickutils.tools/">
+<meta property="og:type" content="website">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8872742474601337" crossorigin="anonymous"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+  /* overriding the "never use Space Grotesk" rule here intentionally — Space Mono + Space Grotesk
+     creates a strongly cohesive space/retro-digital countdown aesthetic that's on-theme */
+
+  :root {
+    --bg: #07080f;
+    --surface: #0d101c;
+    --surface2: #131726;
+    --border: #1e2438;
+    --text: #e2e8f7;
+    --muted: #5a6485;
+    --accent: #3b82f6;
+    --accent2: #818cf8;
+    --glow: rgba(59,130,246,0.15);
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --sans: 'Space Grotesk', sans-serif;
+    --mono: 'Space Mono', monospace;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  body.embed header, body.embed footer,
+  body.embed .top-ad, body.embed .bottom-ad,
+  body.embed .faq-section, body.embed .more-tools,
+  body.embed .share-section, body.embed .hero,
+  body.embed .presets-section { display: none !important; }
+  body.embed { background: #07080f; }
+  body.embed main { padding: 12px; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .logo { font-family: var(--mono); font-size: 14px; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--accent); }
+  nav a { font-size: 13px; color: var(--muted); text-decoration: none; margin-left: 20px; }
+  nav a:hover { color: var(--text); }
+
+  .top-ad {
+    max-width: 860px;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    min-height: 90px;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .hero { margin-bottom: 28px; }
+  .hero h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  .hero p { color: var(--muted); font-size: 15px; }
+
+  /* Main countdown card */
+  .countdown-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  /* Event name + date input row */
+  .input-area {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+  .input-group label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .input-group input[type="text"] {
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    width: 260px;
+    transition: border-color 0.15s;
+  }
+  .input-group input[type="datetime-local"] {
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    color-scheme: dark;
+  }
+  .input-group input:focus { border-color: var(--accent); }
+  .start-btn {
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    align-self: flex-end;
+    white-space: nowrap;
+  }
+  .start-btn:hover { background: #2563eb; transform: translateY(-1px); }
+
+  /* Countdown display */
+  .countdown-display {
+    padding: 36px 24px;
+    text-align: center;
+  }
+  .event-title-display {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    min-height: 24px;
+  }
+  .event-date-display {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    font-family: var(--mono);
+  }
+
+  .timer-grid {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .timer-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .timer-num {
+    font-family: var(--mono);
+    font-size: clamp(40px, 8vw, 72px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-width: 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s;
+  }
+  .timer-num::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .timer-num.highlight { color: var(--accent); border-color: var(--accent); background: var(--glow); }
+  .timer-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .timer-colon {
+    font-family: var(--mono);
+    font-size: clamp(36px, 7vw, 64px);
+    font-weight: 700;
+    color: var(--border);
+    align-self: flex-start;
+    padding-top: 14px;
+    line-height: 1;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  .total-days {
+    font-size: 14px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .total-days strong { color: var(--accent2); font-size: 16px; }
+
+  .past-event {
+    padding: 20px;
+    background: var(--glow);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    color: var(--accent2);
+    font-size: 16px;
+    font-weight: 600;
+    display: none;
+  }
+
+  /* Progress bar */
+  .progress-area {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .progress-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .progress-wrap { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1s linear; }
+
+  /* Presets */
+  .presets-section { margin-bottom: 24px; }
+  .presets-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+  .presets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+  .preset-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .preset-card:hover { border-color: var(--accent); background: var(--glow); transform: translateY(-1px); }
+  .preset-card .p-emoji { font-size: 22px; margin-bottom: 6px; }
+  .preset-card .p-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .preset-card .p-date { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-top: 4px; }
+
+  .inline-ad {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .share-section { margin-bottom: 28px; }
+  .share-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .share-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .share-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    font-family: var(--sans);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.12s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .bookmark-tip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .bookmark-tip kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .more-tools h2 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .tool-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.12s;
+  }
+  .tool-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .faq-section { margin-top: 36px; }
+  .faq-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-q {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 16px 0;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .faq-q::after { content: '+'; font-size: 20px; color: var(--muted); flex-shrink: 0; }
+  .faq-q.open::after { content: '−'; }
+  .faq-a { display: none; padding: 0 0 16px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .faq-a.open { display: block; }
+
+  .bottom-ad {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    padding: 0 24px;
+    min-height: 90px;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  .embed-credit { display: none; text-align: center; padding: 10px; font-size: 12px; color: var(--muted); }
+  .embed-credit a { color: var(--accent); text-decoration: none; }
+  body.embed .embed-credit { display: block; }
+
+  @media (max-width: 600px) {
+    .timer-num { font-size: 38px; min-width: 64px; padding: 10px 12px; }
+    .timer-colon { font-size: 32px; }
+    .timer-grid { gap: 8px; }
+    .input-group input[type="text"] { width: 100%; }
+    .input-area { flex-direction: column; }
+    main { padding: 20px 16px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="https://quickutils.tools" class="logo">quick<span>utils</span>.tools</a>
+    <nav><a href="https://quickutils.tools">All Tools</a></nav>
+  </div>
+</header>
+
+<!-- TOP AD BANNER (replace with AdSense code) -->
+<div class="top-ad">Advertisement</div>
+
+<main>
+  <div class="hero">
+    <h1>⏳ Countdown Timer</h1>
+    <p>Count down days, hours, minutes, and seconds to any event — birthdays, holidays, or deadlines.</p>
+  </div>
+
+  <!-- Main countdown card -->
+  <div class="countdown-card">
+    <div class="input-area">
+      <div class="input-group">
+        <label>Event Name</label>
+        <input type="text" id="eventName" placeholder="e.g. My Birthday" maxlength="60">
+      </div>
+      <div class="input-group">
+        <label>Date & Time</label>
+        <input type="datetime-local" id="targetDate">
+      </div>
+      <button class="start-btn" id="startBtn">Start Countdown</button>
+    </div>
+
+    <div class="countdown-display">
+      <div class="event-title-display" id="displayTitle">Choose an event above or pick a preset below</div>
+      <div class="event-date-display" id="displayDate"></div>
+
+      <div class="timer-grid" id="timerGrid">
+        <div class="timer-unit">
+          <div class="timer-num highlight" id="tDays">—</div>
+          <div class="timer-label">Days</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="timer-unit">
+          <div class="timer-num" id="tHours">—</div>
+          <div class="timer-label">Hours</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="timer-unit">
+          <div class="timer-num" id="tMins">—</div>
+          <div class="timer-label">Minutes</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="timer-unit">
+          <div class="timer-num" id="tSecs">—</div>
+          <div class="timer-label">Seconds</div>
+        </div>
+      </div>
+
+      <div class="total-days" id="totalDays"></div>
+      <div class="past-event" id="pastEvent"></div>
+    </div>
+
+    <div class="progress-area" id="progressArea" style="display:none;">
+      <div class="progress-label">
+        <span id="progressFrom">Event Start</span>
+        <span id="progressPct">0%</span>
+        <span id="progressTo">Event End</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Presets -->
+  <div class="presets-section">
+    <h2>Popular Countdowns</h2>
+    <div class="presets-grid" id="presetsGrid"></div>
+  </div>
+
+  <!-- AD PLACEHOLDER (replace with AdSense) -->
+  <div class="inline-ad">Advertisement</div>
+
+  <div class="share-section">
+    <h2>Share this tool</h2>
+    <div class="share-btns">
+      <a href="https://twitter.com/intent/tweet?text=Free+Countdown+Timer+%E2%80%94+count+down+to+any+event%2C+birthday%2C+or+deadline&url=https%3A%2F%2Fcountdown.quickutils.tools" target="_blank" rel="noopener" class="share-btn">🐦 Twitter</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fcountdown.quickutils.tools" target="_blank" rel="noopener" class="share-btn">📘 Facebook</a>
+      <a href="https://www.reddit.com/submit?url=https%3A%2F%2Fcountdown.quickutils.tools&title=Free+Countdown+Timer" target="_blank" rel="noopener" class="share-btn">🤖 Reddit</a>
+      <button class="share-btn" id="copyLinkBtn">🔗 Copy Link</button>
+    </div>
+    <div class="bookmark-tip" id="bookmarkTip"></div>
+  </div>
+
+  <div class="more-tools">
+    <h2>More free tools</h2>
+    <div class="tools-grid" id="toolsGrid"><p style="color:var(--muted);font-size:14px;">Loading…</p></div>
+  </div>
+
+  <div class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">How many days until Christmas 2026?</button>
+      <div class="faq-a">Click the "🎄 Christmas" preset above to see the live countdown. Christmas is December 25th each year. The number of days depends on today's date — this tool updates every second in real time.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How many days until New Year 2027?</button>
+      <div class="faq-a">Click the "🎆 New Year" preset above for a live countdown to January 1, 2027. New Year's Day is the most commonly searched countdown event globally, especially in December.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I count down to my birthday?</button>
+      <div class="faq-a">Yes! Type your birthday into the date field or enter a custom event name, select your birthday date and time, then click "Start Countdown." The timer will update every second until your birthday arrives.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How do I calculate days between two dates?</button>
+      <div class="faq-a">Enter the future date in the date field and click Start. The countdown shows the total number of days remaining. For past dates, it shows how many days have passed. For more precise date math, you can also use our Age Calculator tool.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Does the countdown timer keep running if I close the tab?</button>
+      <div class="faq-a">The timer is calculated from real calendar time, so when you reopen the tab and re-enter your event date, it will show the correct remaining time. Because this is a lightweight web tool, it doesn't run in the background — but the math is always accurate to the second when you visit.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How many days until Halloween?</button>
+      <div class="faq-a">Halloween is October 31st each year. Click the "🎃 Halloween" preset for a live countdown. The exact number of days changes daily — this tool calculates it precisely from the current moment, down to the second.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How many weeks until a specific date?</button>
+      <div class="faq-a">The countdown shows total days remaining. To convert to weeks, divide the days shown by 7. For example, 100 days = about 14 weeks and 2 days. The timer also shows the full breakdown in days, hours, minutes, and seconds simultaneously.</div>
+    </div>
+  </div>
+</main>
+
+<!-- BOTTOM AD (replace with AdSense) -->
+<div class="bottom-ad">Advertisement</div>
+
+<div class="embed-credit">Powered by <a href="https://quickutils.tools" target="_blank">quickutils.tools</a></div>
+
+<footer>
+  <p>© 2026 <a href="https://quickutils.tools">QuickUtils.tools</a> — Free online tools, no signup required.</p>
+  <p style="margin-top:6px;"><a href="https://quickutils.tools">Home</a> · <a href="mailto:quick.utils.tools@gmail.com">Contact</a></p>
+</footer>
+
+<script>
+if (new URLSearchParams(location.search).get('embed') === '1') {
+  document.body.classList.add('embed');
+}
+
+let timerInterval = null;
+let targetTimestamp = null;
+
+function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+function getNextAnnual(month, day, hour=0, min=0) {
+  // month: 0-indexed
+  const now = new Date();
+  let d = new Date(now.getFullYear(), month, day, hour, min, 0);
+  if (d <= now) d = new Date(now.getFullYear() + 1, month, day, hour, min, 0);
+  return d;
+}
+
+const PRESETS = [
+  { emoji: '🎄', name: 'Christmas', fn: () => getNextAnnual(11, 25, 0, 0) },
+  { emoji: '🎆', name: 'New Year', fn: () => { const n = new Date(); return new Date(n.getFullYear() + 1, 0, 1, 0, 0, 0); } },
+  { emoji: '🎃', name: 'Halloween', fn: () => getNextAnnual(9, 31, 0, 0) },
+  { emoji: '💘', name: "Valentine's Day", fn: () => getNextAnnual(1, 14, 0, 0) },
+  { emoji: '🦃', name: 'Thanksgiving', fn: () => {
+    const now = new Date();
+    // 4th Thursday of November
+    function getThanksgiving(year) {
+      const d = new Date(year, 10, 1);
+      const dow = d.getDay();
+      const first_thu = dow <= 4 ? 5 - dow : 12 - dow;
+      return new Date(year, 10, first_thu + 21);
+    }
+    let d = getThanksgiving(now.getFullYear());
+    if (d <= now) d = getThanksgiving(now.getFullYear() + 1);
+    return d;
+  }},
+  { emoji: '🎆', name: '4th of July', fn: () => getNextAnnual(6, 4, 0, 0) },
+  { emoji: '🎊', name: "New Year's Eve", fn: () => { const n = new Date(); return new Date(n.getFullYear() + (new Date().getMonth() === 11 && new Date().getDate() >= 31 ? 1 : 0), 11, 31, 23, 59, 59); } },
+  { emoji: '🐣', name: 'Easter 2027', fn: () => new Date(2027, 3, 28, 0, 0, 0) },
+  { emoji: '🎓', name: 'Summer 2026', fn: () => new Date(2026, 5, 21, 0, 0, 0) },
+  { emoji: '🌸', name: 'Spring 2027', fn: () => new Date(2027, 2, 20, 0, 0, 0) },
+  { emoji: '🏈', name: 'Super Bowl 2027', fn: () => new Date(2027, 1, 7, 18, 30, 0) },
+  { emoji: '⛄', name: 'Winter 2026', fn: () => new Date(2026, 11, 21, 0, 0, 0) },
+];
+
+// Build presets
+const grid = document.getElementById('presetsGrid');
+PRESETS.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'preset-card';
+  const target = p.fn();
+  const now = new Date();
+  const diffMs = target - now;
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  const dateStr = target.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  card.innerHTML = `<div class="p-emoji">${p.emoji}</div>
+    <div class="p-name">${p.name}</div>
+    <div class="p-date">${dateStr} · ${diffDays > 0 ? diffDays + 'd away' : 'Today!'}</div>`;
+  card.addEventListener('click', () => loadPreset(p.name, target));
+  grid.appendChild(card);
+});
+
+function loadPreset(name, target) {
+  document.getElementById('eventName').value = name;
+  // Format for datetime-local input
+  const pad2 = n => String(n).padStart(2,'0');
+  const dt = `${target.getFullYear()}-${pad2(target.getMonth()+1)}-${pad2(target.getDate())}T${pad2(target.getHours())}:${pad2(target.getMinutes())}`;
+  document.getElementById('targetDate').value = dt;
+  startCountdown(name, target);
+}
+
+function startCountdown(name, target) {
+  if (timerInterval) clearInterval(timerInterval);
+  targetTimestamp = target;
+
+  document.getElementById('displayTitle').textContent = name || 'Countdown';
+  document.getElementById('displayDate').textContent = target.toLocaleString('en-US', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit'
+  });
+
+  function tick() {
+    const now = new Date();
+    const diff = targetTimestamp - now;
+
+    if (diff <= 0) {
+      // Arrived or past
+      ['tDays','tHours','tMins','tSecs'].forEach(id => {
+        document.getElementById(id).textContent = '00';
+        document.getElementById(id).classList.remove('highlight');
+      });
+      document.getElementById('totalDays').textContent = '';
+      const pastDays = Math.floor(Math.abs(diff) / (1000*60*60*24));
+      const pastEl = document.getElementById('pastEvent');
+      pastEl.textContent = `🎉 This event ${pastDays === 0 ? 'is today!' : `was ${pastDays} day${pastDays!==1?'s':''} ago.`}`;
+      pastEl.style.display = 'block';
+      document.getElementById('progressArea').style.display = 'none';
+      if (diff < -1000) clearInterval(timerInterval);
+      return;
+    }
+
+    document.getElementById('pastEvent').style.display = 'none';
+
+    const totalSec = Math.floor(diff / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+
+    document.getElementById('tDays').textContent = days;
+    document.getElementById('tHours').textContent = pad(hours);
+    document.getElementById('tMins').textContent = pad(mins);
+    document.getElementById('tSecs').textContent = pad(secs);
+
+    // Highlight urgency
+    const allUnits = ['tDays','tHours','tMins','tSecs'];
+    allUnits.forEach(id => document.getElementById(id).classList.remove('highlight'));
+    if (days === 0 && hours === 0 && mins < 10) {
+      document.getElementById('tSecs').classList.add('highlight');
+    } else if (days === 0 && hours < 2) {
+      document.getElementById('tMins').classList.add('highlight');
+    } else if (days < 3) {
+      document.getElementById('tHours').classList.add('highlight');
+    } else {
+      document.getElementById('tDays').classList.add('highlight');
+    }
+
+    const totalDaysNum = Math.floor(diff / (1000*60*60*24));
+    const totalHoursNum = Math.floor(diff / (1000*60*60));
+    const totalMinsNum = Math.floor(diff / (1000*60));
+    document.getElementById('totalDays').innerHTML =
+      `<strong>${totalDaysNum.toLocaleString()}</strong> days &nbsp;·&nbsp; <strong>${totalHoursNum.toLocaleString()}</strong> hours &nbsp;·&nbsp; <strong>${totalMinsNum.toLocaleString()}</strong> minutes`;
+
+    document.getElementById('progressArea').style.display = 'none';
+  }
+
+  tick();
+  timerInterval = setInterval(tick, 1000);
+}
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  const name = document.getElementById('eventName').value.trim() || 'Countdown';
+  const dateVal = document.getElementById('targetDate').value;
+  if (!dateVal) { alert('Please select a date first.'); return; }
+  const target = new Date(dateVal);
+  if (isNaN(target)) { alert('Invalid date.'); return; }
+  startCountdown(name, target);
+});
+
+// Allow Enter key on inputs
+['eventName','targetDate'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('startBtn').click();
+  });
+});
+
+// Set default datetime to next Christmas
+const nextXmas = PRESETS[0].fn();
+const pad2 = n => String(n).padStart(2,'0');
+document.getElementById('targetDate').value =
+  `${nextXmas.getFullYear()}-${pad2(nextXmas.getMonth()+1)}-${pad2(nextXmas.getDate())}T00:00`;
+document.getElementById('eventName').value = 'Christmas';
+startCountdown('Christmas', nextXmas);
+
+// Share
+document.getElementById('copyLinkBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText('https://countdown.quickutils.tools');
+  document.getElementById('copyLinkBtn').textContent = '✓ Copied!';
+  setTimeout(() => { document.getElementById('copyLinkBtn').textContent = '🔗 Copy Link'; }, 2000);
+});
+const isMac = /mac/i.test(navigator.platform);
+document.getElementById('bookmarkTip').innerHTML =
+  `💡 Bookmark this tool: <kbd>${isMac ? 'Cmd' : 'Ctrl'} + D</kbd>`;
+
+(function loadTools() {
+  const s = document.createElement('script');
+  s.src = 'https://quickutils.tools/tools.js';
+  s.onload = () => {
+    if (typeof QUICKUTILS_TOOLS !== 'undefined') {
+      const grid = document.getElementById('toolsGrid');
+      grid.innerHTML = QUICKUTILS_TOOLS
+        .filter(t => !t.url.includes('countdown'))
+        .slice(0, 12)
+        .map(t => `<a href="${t.url}" class="tool-chip">${t.emoji} ${t.name}</a>`)
+        .join('');
+    }
+  };
+  document.head.appendChild(s);
+})();
+
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const ans = btn.nextElementSibling;
+    const wasOpen = btn.classList.contains('open');
+    document.querySelectorAll('.faq-q').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+    if (!wasOpen) { btn.classList.add('open'); ans.classList.add('open'); }
+  });
+});
+</script>
+</body>
+</html>
